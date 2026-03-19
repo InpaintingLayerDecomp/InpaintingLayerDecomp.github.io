@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Generative Image Layer Decomposition with Visual Effects</title>
+
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+  <style>
+      
+      .references {
+      text-align: center; 
+      margin: 50px auto; 
+      font-size: 1rem;
+      width: 60%; 
+      background-color: #f9f9f9; 
+      padding: 20px; 
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+      }
+
+      .references ol {
+          display: inline-block; 
+          text-align: left;
+          padding-left: 20px;
+          margin: 0 auto;
+      }
+
+      .references li {
+          margin-bottom: 5px; 
+      }
+
+      .custom-list {
+            list-style: none; 
+            padding-left: 0; 
+        }
+        .custom-list {
+            counter-reset: custom-counter;
+      }
+
+       
+        .acknowledgment {
+            background-color: #d7dee2; 
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px auto; 
+            width: 60%; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
+            text-align: left;
+        }
+
+        .acknowledgment h2 {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .acknowledgment p {
+            line-height: 1.6;
+            text-align: left; 
+        }
+
+        .acknowledgment a {
+            color: #0073e6; 
+            text-decoration: none;
+        }
+
+        .acknowledgment a:hover {
+            text-decoration: underline;
+        }
+
+       
+       
+      .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4); 
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 60%; 
+            max-height: 80%; 
+            overflow-y: auto; 
+            border-radius: 5px;
+        }
+
+       
+        .modal-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; 
+            margin-bottom: 20px;
+        }
+
+        .modal-item img {
+            max-width: 150px;
+            height: auto;
+            margin-right: 10px; 
+            border-radius: 5px;
+        }
+
+        .modal-item a {
+            color: #0073e6;
+            text-decoration: none;
+            word-break: break-word; 
+        }
+
+        .modal-item a:hover {
+            text-decoration: underline;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+  </style>
+
+
+
+</head>
+<body>
+
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">From Inpainting to Layer Decomposition: <br>
+            Repurposing Generative Inpainting Models for Image Layer Decomposition</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <span><a href="https://codingrex.github.io/">Jingxi Chen</a></span><sup>1*</sup>,</span>
+            <span class="author-block">
+              <span><a href="https://scholar.google.com/citations?user=lU3wroMAAAAJ&hl=zh-CN">Yixiao Zhang</a></span><sup>2</sup>,</span>
+            <span class="author-block">
+              <span><a href="https://www.linkedin.com/in/xiaoye-qian-912060173/">Xiaoye Qian</a></span><sup>2</sup>,</span>
+            </span>
+            <span class="author-block">
+              <span> <a href="https://zli12321.github.io/">Zongxia Li</a></span><sup>1</sup>,</span>
+            </span>
+            <br>
+            <span class="author-block">
+              <span><a href="https://scholar.google.com/citations?hl=en&user=0gEOJSEAAAAJ&view_op=list_works&sortby=pubdate">Cornelia Fermuller</a></span><sup>1</sup>,</span>
+            </span>
+            <span class="author-block">
+              <span><a href="https://www.linkedin.com/in/caren-chen-36188a3/">Caren Chen</a></span><sup>2</sup>,</span>
+            </span>
+            <span class="author-block">
+              <span><a href="https://scholar.google.com/citations?user=7QmEsOwAAAAJ&hl=en">Yiannis Aloimonos</a></span><sup>1</sup>,</span>
+            </span>
+          </div>
+ 
+        
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <span><sup>1</sup>University of Maryland</a></span>,</span>
+            <span class="author-block">
+              <span><sup>2</sup>Amazon</a></span></span>
+          
+          
+          </div>
+          
+          <div class="equal-contribution-advising-note">
+            <p>* This work was done when Jingxi Chen was an applied scientist intern at Amazon Prime Video team.</p>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2511.20996"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fa-solidassasas fa-face-smiling-hands"></i>
+                    <img src="./resources/ar.svg" alt="img" style="width: 100%; height: 100%" /> 
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+         
+              
+            
+            <div class="has-text-centered">
+              <span style="font-size: 1.5em; font-weight: bold;">CVPR 2026</span>
+            </div>
+
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<br>
+
+<section class="hero teaser">
+  <div class="container">
+    <div class="hero-body">
+      <center><h2 class="title is-3">Key Insight: Adapting Pre-trained Inpainting Models for Layer Decomposition</h2></center>
+      <center><img src="./resources/pipeline.png" alt="alt text"
+                        style="width: 80%; object-fit: cover; max-width:80%;"></a></center>
+      <h2 class="subtitle" style="text-align: left;">
+        The core idea of our method is that image layer decomposition can be reformulated as a combination of inpainting and outpainting tasks. Rather than designing a model from scratch, we show that a single inpainting model can be efficiently fine-tuned to handle this task.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<br>
+
+<section class="section">
+  <div class="container">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-left">
+          <p>
+            Images can be viewed as layered compositions, foreground objects over background, with potential occlusions. This layered representation enables independent editing of elements, offering greater flexibility for content creation. Despite the progress in large generative models, decomposing a single image into layers remains challenging due to limited methods and data. We observe a strong connection between layer decomposition and in/outpainting tasks, and propose adapting a diffusion-based inpainting model for layer decomposition using lightweight finetuning. To further preserve detail in the latent space, we introduce a novel multi-modal context fusion module with linear attention complexity. Our model is trained purely on a synthetic dataset constructed from open-source assets and achieves superior performance in object removal and occlusion recovery, unlocking new possibilities in downstream editing and creative applications.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<br>
+
+<section class="hero teaser">
+  <div class="container">
+    <div class="hero-body">
+      <center><h2 class="title is-3">Detailed Diagram of the Proposed Adaptation Method</h2></center>
+      <center><img src="./resources/Method.png" alt="alt text"
+                        style="width: 100%; object-fit: cover; max-width:100%;"></a></center>
+      <h2 class="subtitle has-text-left">
+        <b>Detailed diagram of the key components in our proposed adaptation method: </b>  Light blue boxes denote components from the original
+        pre-trained inpainting DiT model, while orange boxes represent our modifications or additions. Our approach efficiently incorporates both
+        Image-Mask Context and Multi-Modal Context tokens to guide generation. After adaptation, the model can simultaneously output an
+        extracted and outpainted foreground along with a clean, object-removed background.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<br><br><br>
+
+<section class="hero teaser">
+  <div class="container">
+    <div class="hero-body">
+      <center><h2 class="title is-3">Object Removal Task: Comparison with Baseline Methods</h2></center>
+      <center><img src="./resources/qualitative2.png" alt="alt text"
+                        style="width: 100%; object-fit: cover; max-width:100%;"></a></center>
+      <h2 class="subtitle has-text-left">
+        <b>Object Removal Task: Comparison with Baseline Methods.</b> We present examples comparing our method against baselines on our collected real-world image test set for the object removal task.
+        These qualitative results highlight the visual differences in foreground removal accuracy, background reconstruction quality, and consistency
+        across various challenging scenes. Please zoom in for the best viewing quality.
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<br><br><br>
+
+
+<section class="hero teaser">
+  <div class="container">
+    <div class="hero-body">
+      <center><h2 class="title is-3">Foreground Extraction Task: Comparison with Baseline Methods</h2></center>
+      <center><img src="./resources/supp_fg.png" alt="alt text"
+                        style="width: 100%; object-fit: cover; max-width:100%;"></a></center>
+      <h2 class="subtitle has-text-left">
+        <b>Foreground Extraction Task: Comparison with Baseline Methods.</b> We present additional comparisons of foreground extraction using two matting methods, Matting-Anything and DiffMatte, both of
+        which produce RGBA foreground layers.
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<br><br><br>
+
+
+<section class="hero teaser">
+  <div class="container">
+    <div class="hero-body">
+      <center><h2 class="title is-3">Layer-based Image Editing Examples</h2></center>
+      <center><img src="./resources/editing.png" alt="alt text"
+                        style="width: 100%; object-fit: cover; max-width:100%;"></a></center>
+      <h2 class="subtitle has-text-left">
+        <b>Layer-based Image Editing Examples.</b>  Layer decomposition enables manipulation of elements. Left: the original image, right: the edited image.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<br><br><br>
+
+<section class="hero teaser">
+  <div class="container">
+    <div class="hero-body">
+      <center><h2 class="title is-3">Training Data Curation from Public Sources</h2></center>
+      <center><img src="./resources/data_source.png" alt="alt text"
+                        style="width: 80%; object-fit: cover; max-width:80%;"></a></center>
+      <h2 class="subtitle has-text-left">
+        <b>Training Data Curation from Public Sources.</b> We propose a hybrid data strategy that combines two complementary foreground sources:1) Real foregrounds with rich detail but incomplete shapes, 2) Generated foregrounds with complete shapes but limited texture fidelity. By merging these two types, we construct a more balanced and effective training dataset.
+    </div>
+  </div>
+</section>
+
+
+
+
+<br>
+
+<section class="acknowledgment">
+    <h2>ACKNOWLEDGMENT</h2>
+    <p>
+        We acknowlege and appreciate the inspiration of prior work in the generative image layer decomposition, especially the work of <a href="https://arxiv.org/abs/2411.17864">Generative Image Layer Decomposition with Visual Effects</a> by Jinrui Yang et al., which has significantly influenced our research direction and methodology. We also thank the open-source community for providing valuable resources and datasets that have facilitated our research.
+    </p>
+</section>
+
+
+<script>
+    const modal = document.getElementById("image-modal");
+    const openModal = document.getElementById("open-modal");
+    const closeModal = document.getElementById("close-modal");
+
+    openModal.onclick = function(event) {
+        event.preventDefault(); 
+        modal.style.display = "block";
+    };
+
+    closeModal.onclick = function() {
+        modal.style.display = "none";
+    };
+
+   
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            Based on the following <a href="http://nerfies.github.io">template</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
